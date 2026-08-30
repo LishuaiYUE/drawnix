@@ -130,6 +130,8 @@ const enTranslations: Translations = {
   'popupToolbar.link': 'Insert Link',
   'popupToolbar.stroke': 'Stroke',
   'popupToolbar.opacity': 'Opacity',
+  'popupToolbar.followMindCollapse': 'Follow mind map collapse',
+  'mindAttachment.reassigned': 'The element was reassigned to the new mind node',
 
   // Text placeholders
   'textPlaceholders.link': 'Link',

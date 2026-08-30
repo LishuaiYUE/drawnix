@@ -131,6 +131,8 @@ const arTranslations: Translations = {
   'popupToolbar.link': 'إدراج رابط',
   'popupToolbar.stroke': 'الحد',
   'popupToolbar.opacity': 'مستوى شفافية',
+  'popupToolbar.followMindCollapse': 'الطي مع الخريطة الذهنية',
+  'mindAttachment.reassigned': 'تم ربط العنصر بعقدة الخريطة الذهنية الجديدة',
 
   // Text placeholders
   'textPlaceholders.link': 'رابط',

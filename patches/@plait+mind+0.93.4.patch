@@ -1,0 +1,63 @@
+diff --git a/node_modules/@plait/mind/.npmignore b/node_modules/@plait/mind/.npmignore
+new file mode 100644
+index 0000000..c97ccf2
+--- /dev/null
++++ b/node_modules/@plait/mind/.npmignore
+@@ -0,0 +1,2 @@
++# Nested package.json's are only needed for development.
++**/package.json
+\ No newline at end of file
+diff --git a/node_modules/@plait/mind/fesm2022/plait-mind.mjs b/node_modules/@plait/mind/fesm2022/plait-mind.mjs
+index 607d8ee..09ce0f5 100644
+--- a/node_modules/@plait/mind/fesm2022/plait-mind.mjs
++++ b/node_modules/@plait/mind/fesm2022/plait-mind.mjs
+@@ -1,6 +1,6 @@
+ import { DEFAULT_COLOR, DefaultThemeColor, ColorfulThemeColor, SoftThemeColor, RetroThemeColor, DarkThemeColor, StarryThemeColor, rgbaToHEX, PlaitElement, PlaitNode, Path, isNullOrUndefined, PlaitBoard, getSelectedElements, getI18nValue, idCreator, Transforms, clearSelectedElement, addSelectedElement, distanceBetweenPointAndRectangle, RectangleClient, Direction, isHorizontalDirection, depthFirstRecursion, getIsRecursionFunc, setDragging, drawRoundRectangle, drawLinearPath, drawBezierPath, setStrokeLinecap, createG, createForeignObject, updateForeignObject, getRectangleByElements, toActiveRectangleFromViewBoxRectangle, ACTIVE_STROKE_WIDTH, SELECTION_RECTANGLE_CLASS_NAME, NODE_TO_PARENT, removeSelectedElement, PlaitHistoryBoard, createText, isSelectionMoving, isDragging, isMovingElements, NODE_TO_INDEX, PlaitPointerType, isMainPointer, toViewBoxPoint, toHostPoint, getHitElementByPoint, distanceBetweenPointAndPoint, CoreTransforms, toActivePointFromViewBoxPoint, BoardTransforms, throttleRAF, createDebugGenerator, getElementById, isTouchDevice, isSelectedElement, isContextmenu, temporaryDisableSelection, hotkeys, createClipboardContext, WritableClipboardType, Point, ResizeCursorClass, WritableClipboardOperationType, addOrCreateClipboardContext } from '@plait/core';
+ import { MindLayoutType, AbstractNode, isIndentedLayout, isHorizontalLogicLayout, ConnectingPosition, isHorizontalLayout, getNonAbstractChildren, isStandardLayout, isLeftLayout, isRightLayout, isVerticalLogicLayout, isTopLayout, isBottomLayout, getCorrectStartEnd, getAbstractLayout, GlobalLayout } from '@plait/layouts';
+-import { StrokeStyle, getFirstTextManage, buildText, getElementSize, DEFAULT_FONT_FAMILY, RESIZE_HANDLE_DIAMETER, getRectangleResizeHandleRefs, getXDistanceBetweenPoint, addElementOfFocusedImage, ImageGenerator, removeElementOfFocusedImage, getStrokeLineDash, moveXOfPoint, moveYOfPoint, Generator, PropertyTransforms, TRANSPARENT, measureElement, isResizing, CommonElementFlavour, WithTextPluginKey, TextManage, isDrawingMode, isDndMode, setCreationMode, BoardCreationMode, isExpandHotkey, isTabHotkey, isEnterHotkey, isVirtualKey, isDelete, isSpaceHotkey, getElementOfFocusedImage, acceptImageTypes, buildImage, withResize, getElementsText } from '@plait/common';
++import { StrokeStyle, getFirstTextManage, buildText, getElementSize, DEFAULT_FONT_FAMILY, RESIZE_HANDLE_DIAMETER, getRectangleResizeHandleRefs, getXDistanceBetweenPoint, addElementOfFocusedImage, ImageGenerator, removeElementOfFocusedImage, getStrokeLineDash, moveXOfPoint, moveYOfPoint, Generator, PropertyTransforms, TRANSPARENT, measureElement, isResizing, CommonElementFlavour, WithTextPluginKey, TextManage, isDrawingMode, isDndMode, setCreationMode, BoardCreationMode, isExpandHotkey, isTabHotkey, isEnterHotkey, isVirtualKey, isDelete, isSpaceHotkey, getElementOfFocusedImage, acceptImageTypes, buildImage, withResize, getElementsText, getDirectionByPointOfRectangle, getDirectionFactor } from '@plait/common';
+ import { DEFAULT_FONT_SIZE, PlaitMarkEditor, MarkTypes, FontSizes } from '@plait/text-plugins';
+ import { Node as Node$1, Path as Path$1 } from 'slate';
+ import { pointsOnBezierCurves } from 'points-on-curve';
+@@ -4367,7 +4367,41 @@ const fixMindElementData = (element) => {
+ 
+ const withMind = (baseBoard) => {
+     const board = baseBoard;
++    const connectionBoard = board;
++    const getConnectionGeometry = connectionBoard.getConnectionGeometry?.bind(connectionBoard);
+     const { drawElement, dblClick, isRectangleHit, isHit, getRectangle, isMovable, isRecursion, isAlign, isImageBindingAllowed, canAddToGroup, canSetZIndex, isExpanded, getOneHitElement, normalizeElement } = board;
++    if (getConnectionGeometry) {
++        connectionBoard.getConnectionGeometry = (element) => {
++            if (MindElement.isMindElement(board, element)) {
++                const rectangle = getRectangleByNode(MindElement.getNode(element));
++                return {
++                    rectangle,
++                    connectorPoints: RectangleClient.getEdgeCenterPoints(rectangle),
++                    getNearestPoint: (point) => {
++                        const x = Math.max(rectangle.x, Math.min(point[0], rectangle.x + rectangle.width));
++                        const y = Math.max(rectangle.y, Math.min(point[1], rectangle.y + rectangle.height));
++                        const candidates = [
++                            [rectangle.x, y],
++                            [rectangle.x + rectangle.width, y],
++                            [x, rectangle.y],
++                            [x, rectangle.y + rectangle.height]
++                        ];
++                        return candidates.reduce((nearest, candidate) => {
++                            const distance = Math.hypot(candidate[0] - point[0], candidate[1] - point[1]);
++                            const nearestDistance = Math.hypot(nearest[0] - point[0], nearest[1] - point[1]);
++                            return distance < nearestDistance ? candidate : nearest;
++                        });
++                    },
++                    getVector: (connection) => {
++                        const direction = getDirectionByPointOfRectangle(connection);
++                        const factor = direction ? getDirectionFactor(direction) : { x: 0, y: 0 };
++                        return [factor.x, factor.y];
++                    }
++                };
++            }
++            return getConnectionGeometry(element);
++        };
++    }
+     board.normalizeElement = (context) => {
+         if (PlaitMind.isMind(context.element)) {
+             depthFirstRecursion(context.element, (node) => {

@@ -133,6 +133,8 @@ const ruTranslations: Translations = {
   'popupToolbar.link': 'Вставить ссылку',
   'popupToolbar.stroke': 'Контур',
   'popupToolbar.opacity': 'Прозрачность',
+  'popupToolbar.followMindCollapse': 'Сворачивать с интеллект-картой',
+  'mindAttachment.reassigned': 'Элемент привязан к новому узлу интеллект-карты',
 
   // Text placeholders
   'textPlaceholders.link': 'Ссылка',

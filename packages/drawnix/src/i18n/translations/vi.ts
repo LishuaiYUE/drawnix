@@ -132,6 +132,8 @@ const viTranslations: Translations = {
   'popupToolbar.link': 'Chèn liên kết',
   'popupToolbar.stroke': 'Đường viền',
   'popupToolbar.opacity': 'Độ trong suốt',
+  'popupToolbar.followMindCollapse': 'Thu gọn theo sơ đồ tư duy',
+  'mindAttachment.reassigned': 'Phần tử đã được gán cho nút sơ đồ tư duy mới',
 
   // Text placeholders
   'textPlaceholders.link': 'Liên kết',

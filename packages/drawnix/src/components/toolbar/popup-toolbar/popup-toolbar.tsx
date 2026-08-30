@@ -42,6 +42,7 @@ import { Freehand } from '../../../plugins/freehand/type';
 import { PopupLinkButton } from './link-button';
 import { ArrowMarkButton } from './arrow-mark-button';
 import { MoreOptionsButton } from './more-options-button';
+import { MindAttachmentButton } from './mind-attachment-button';
 
 export const PopupToolbar = () => {
   const board = useBoard();
@@ -227,6 +228,7 @@ export const PopupToolbar = () => {
               <>
                 <ArrowMarkButton board={board} key={4} end={'source'} endProperty={state.source} />
                 <ArrowMarkButton board={board} key={5} end={'target'} endProperty={state.target} />
+                <MindAttachmentButton board={board} key="mind-attachment" />
               </>
             )}
             <MoreOptionsButton board={board} key={6} />
