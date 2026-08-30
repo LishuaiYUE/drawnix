@@ -8,7 +8,7 @@ index 0000000..c97ccf2
 +**/package.json
 \ No newline at end of file
 diff --git a/node_modules/@plait/mind/fesm2022/plait-mind.mjs b/node_modules/@plait/mind/fesm2022/plait-mind.mjs
-index 607d8ee..09ce0f5 100644
+index 607d8ee..86953c3 100644
 --- a/node_modules/@plait/mind/fesm2022/plait-mind.mjs
 +++ b/node_modules/@plait/mind/fesm2022/plait-mind.mjs
 @@ -1,6 +1,6 @@
@@ -28,7 +28,7 @@ index 607d8ee..09ce0f5 100644
      const { drawElement, dblClick, isRectangleHit, isHit, getRectangle, isMovable, isRecursion, isAlign, isImageBindingAllowed, canAddToGroup, canSetZIndex, isExpanded, getOneHitElement, normalizeElement } = board;
 +    if (getConnectionGeometry) {
 +        connectionBoard.getConnectionGeometry = (element) => {
-+            if (MindElement.isMindElement(board, element)) {
++            if (element && MindElement.isMindElement(board, element)) {
 +                const rectangle = getRectangleByNode(MindElement.getNode(element));
 +                return {
 +                    rectangle,
