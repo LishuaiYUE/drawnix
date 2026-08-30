@@ -30,9 +30,11 @@ vi.mock('@plait/draw', () => ({
 import {
   getMindAttachmentContext,
   getValidMindAttachment,
+  isLineBoundToHiddenMindNode,
   isMindAttachmentCollapsed,
   remapPastedAttachmentLines,
   setMindAttachment,
+  syncMindAttachment,
 } from './utils';
 
 const mind = { id: 'mind-1', type: 'mind_child', children: [], data: { topic: true } };
@@ -69,6 +71,29 @@ describe('mind attachments', () => {
     });
   });
 
+  it.each(['geometry', 'image', 'table', 'swimlane'])(
+    'accepts a mind connection to a %s element',
+    (type) => {
+      const external = { id: `external-${type}`, type };
+      const targetLine = {
+        ...structuredClone(line),
+        target: { boundId: external.id },
+      };
+      board.children = [targetLine, board.children[1], external];
+      board.all = board.children;
+      expect(getMindAttachmentContext(board, targetLine)).toMatchObject({
+        mindNodeId: mind.id,
+        elementId: external.id,
+      });
+    }
+  );
+
+  it('treats stale or mismatched persisted ids as an ordinary line', () => {
+    const targetLine = board.children[0];
+    targetLine.mindAttachment = { mindNodeId: 'missing', elementId: shape.id };
+    expect(getValidMindAttachment(board, targetLine)).toBeNull();
+  });
+
   it('treats the owner itself and collapsed ancestors as hidden', () => {
     const owner = board.children[1];
     owner.isCollapsed = true;
@@ -93,6 +118,30 @@ describe('mind attachments', () => {
     expect(result.changedOwner).toBe(true);
     expect(board.children[0].mindAttachment).toBeUndefined();
     expect(otherLine.mindAttachment).toEqual({ mindNodeId: otherMind.id, elementId: shape.id });
+  });
+
+  it('updates or clears an enabled relation after endpoint rebinding', () => {
+    const targetLine = board.children[0];
+    setMindAttachment(board, targetLine, true);
+    const otherShape = { id: 'shape-2', type: 'image' };
+    board.children.push(otherShape);
+    board.all = board.children;
+    targetLine.target.boundId = otherShape.id;
+    syncMindAttachment(board, targetLine);
+    expect(targetLine.mindAttachment).toEqual({
+      mindNodeId: mind.id,
+      elementId: otherShape.id,
+    });
+    targetLine.source.boundId = otherShape.id;
+    syncMindAttachment(board, targetLine);
+    expect(targetLine.mindAttachment).toBeUndefined();
+  });
+
+  it('hides an ordinary line to a descendant without hiding its external endpoint', () => {
+    const owner = board.children[1];
+    board.ancestors[owner.id] = [{ id: 'parent', type: 'mind_child', isCollapsed: true }];
+    expect(isLineBoundToHiddenMindNode(board, board.children[0])).toBe(true);
+    expect(isMindAttachmentCollapsed(board, owner)).toBe(true);
   });
 
   it('remaps both endpoints and attachment ids when all related elements are pasted', () => {
