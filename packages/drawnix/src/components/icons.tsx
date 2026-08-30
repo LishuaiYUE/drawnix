@@ -485,6 +485,15 @@ export const LinkIcon = createIcon(
   </svg>
 );
 
+export const MindAttachmentIcon = createIcon(
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+      <path d="M5.2 8.6 9.7 4.1a2.1 2.1 0 0 1 3 3l-5.5 5.5a3.2 3.2 0 0 1-4.5-4.5l5.1-5.2" />
+      <path d="m6.1 10.2 5-5" />
+    </g>
+  </svg>
+);
+
 export const MoreOptionsIcon = createIcon(
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
     <g stroke="none" fill="currentColor">

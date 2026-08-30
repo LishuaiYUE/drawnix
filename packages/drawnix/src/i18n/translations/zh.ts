@@ -132,6 +132,8 @@ const zhTranslations: Translations = {
   'popupToolbar.link': '链接',
   'popupToolbar.stroke': '边框',
   'popupToolbar.opacity': '不透明度',
+  'popupToolbar.followMindCollapse': '跟随思维导图折叠',
+  'mindAttachment.reassigned': '该元素已转移到新的所属节点',
 
   // Text placeholders
   'textPlaceholders.link': '链接',

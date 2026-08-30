@@ -46,6 +46,7 @@ import type { Language } from './i18n/types';
 import { Tutorial } from './components/tutorial';
 import { LASER_POINTER_CLASS_NAME } from './utils/laser-pointer';
 import { Toast, useToast } from './components/toast/toast';
+import { withMindAttachment } from './plugins/mind-attachment/with-mind-attachment';
 
 export type DrawnixProps = {
   value: PlaitElement[];
@@ -203,6 +204,7 @@ export const Drawnix: React.FC<DrawnixProps> = ({
     withMind,
     withMindExtend,
     withCommonPlugin,
+    withMindAttachment,
     buildDrawnixHotkeyPlugin(updateAppState),
     withFreehand,
     buildPencilPlugin(updateAppState),

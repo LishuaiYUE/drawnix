@@ -136,6 +136,8 @@ export interface Translations {
   'popupToolbar.link': string;
   'popupToolbar.stroke': string;
   'popupToolbar.opacity': string;
+  'popupToolbar.followMindCollapse': string;
+  'mindAttachment.reassigned': string;
 
   // Text placeholders
   'textPlaceholders.link': string;
