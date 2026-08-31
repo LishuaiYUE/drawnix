@@ -23,6 +23,7 @@ export const MindAttachmentButton = ({ board }: { board: PlaitBoard }) => {
       type="button"
       visible={true}
       selected={selected}
+      className="mind-attachment-button"
       icon={MindAttachmentIcon}
       title={title}
       aria-label={title}

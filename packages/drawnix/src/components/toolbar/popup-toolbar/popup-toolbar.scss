@@ -1,4 +1,11 @@
 .popup-toolbar {
+    .mind-attachment-button.tool-icon--selected {
+        background-color: var(--color-primary);
+        .tool-icon__icon,
+        svg {
+            color: var(--color-icon-white);
+        }
+    }
     .popup-font-size {
         height: var(--lg-button-size);
         display: flex;

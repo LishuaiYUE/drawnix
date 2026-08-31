@@ -53,14 +53,18 @@ index 2998a95..dc04f90 100644
          const nodeRectangle = board.getRectangle(node);
          if (nodeRectangle) {
              const cornerPoints = RectangleClient.getCornerPoints(nodeRectangle);
-@@ -5353,6 +5361,7 @@ class ListRender {
-                 else {
-                     const instance = this.instances[record.previousIndex];
-                     instance.context = context;
-+                    instance.getContainerG().style.display = board.isVisible(record.item) ? '' : 'none';
-                     newInstances.push(instance);
-                     newContexts.push(context);
+@@ -5360,6 +5368,11 @@ class ListRender {
+                     currentIndexForFirstElement = record.currentIndex;
                  }
+             });
++            // Visibility can depend on another element. Refresh it only after every
++            // context and element-map entry has been updated for this render pass.
++            newInstances.forEach((instance, index) => {
++                instance.getContainerG().style.display = board.isVisible(children[index]) ? '' : 'none';
++            });
+             diffResult.forEachOperation((record) => {
+                 // removed
+                 if (record.currentIndex === null) {
 @@ -5385,6 +5394,7 @@ class ListRender {
                  const previousInstance = this.instances[index];
                  const context = getContext(board, element, index, parent, previousContext);
