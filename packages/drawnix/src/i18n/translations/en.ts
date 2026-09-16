@@ -131,6 +131,8 @@ const enTranslations: Translations = {
   'popupToolbar.stroke': 'Stroke',
   'popupToolbar.opacity': 'Opacity',
   'popupToolbar.followMindCollapse': 'Follow mind map collapse',
+  'popupToolbar.freeMindLayout': 'Freely position mind nodes',
+  'popupToolbar.resetMindPosition': 'Reset automatic position',
   'mindAttachment.reassigned': 'The element was reassigned to the new mind node',
 
   // Text placeholders

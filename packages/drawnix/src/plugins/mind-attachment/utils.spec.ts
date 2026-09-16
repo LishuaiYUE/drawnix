@@ -36,6 +36,7 @@ import {
   setMindAttachment,
   syncMindAttachment,
 } from './utils';
+import { withMindAttachment } from './with-mind-attachment';
 
 const mind = { id: 'mind-1', type: 'mind_child', children: [], data: { topic: true } };
 const shape = { id: 'shape-1', type: 'geometry' };
@@ -99,8 +100,70 @@ describe('mind attachments', () => {
     owner.isCollapsed = true;
     expect(isMindAttachmentCollapsed(board, owner)).toBe(true);
     owner.isCollapsed = false;
-    board.ancestors[owner.id] = [{ id: 'parent', type: 'mind_child', isCollapsed: true }];
+    const parent = {
+      id: 'parent',
+      type: 'mind_child',
+      isCollapsed: true,
+      children: [owner],
+      data: { topic: true },
+    };
+    board.children = [board.children[0], parent, board.children[2]];
     expect(isMindAttachmentCollapsed(board, owner)).toBe(true);
+  });
+
+  it('preserves an enabled relation when collapse removes the mind node from the render index', () => {
+    const targetLine = board.children[0];
+    const owner = board.children[1];
+    const external = board.children[2];
+    setMindAttachment(board, targetLine, true);
+    const parent = {
+      id: 'parent',
+      type: 'mind_child',
+      isCollapsed: true,
+      children: [owner],
+      data: { topic: true },
+    };
+    board.children = [targetLine, external, parent];
+    board.all = [targetLine, external, parent];
+
+    syncMindAttachment(board, targetLine);
+
+    expect(targetLine.mindAttachment).toEqual({
+      mindNodeId: owner.id,
+      elementId: external.id,
+    });
+    expect(getValidMindAttachment(board, targetLine)).not.toBeNull();
+    expect(isMindAttachmentCollapsed(board, owner)).toBe(true);
+  });
+
+  it('keeps the toggle enabled and hides both the line and external element after collapse', () => {
+    const targetLine = board.children[0];
+    const owner = board.children[1];
+    const external = board.children[2];
+    setMindAttachment(board, targetLine, true);
+    const parent = {
+      id: 'parent',
+      type: 'mind_child',
+      isCollapsed: true,
+      children: [owner],
+      data: { topic: true },
+    };
+    board.children = [targetLine, external, parent];
+    board.all = [targetLine, external, parent];
+    board.isVisible = () => true;
+    board.getDeletedFragment = (elements: any[]) => elements;
+    board.globalPointerUp = () => undefined;
+    board.insertFragment = () => undefined;
+    withMindAttachment(board);
+
+    board.globalPointerUp({} as PointerEvent);
+
+    expect(targetLine.mindAttachment).toEqual({
+      mindNodeId: owner.id,
+      elementId: external.id,
+    });
+    expect(board.isVisible(targetLine)).toBe(false);
+    expect(board.isVisible(external)).toBe(false);
   });
 
   it('keeps only one attachment owner for an external element', () => {
@@ -139,7 +202,14 @@ describe('mind attachments', () => {
 
   it('hides an ordinary line to a descendant without hiding its external endpoint', () => {
     const owner = board.children[1];
-    board.ancestors[owner.id] = [{ id: 'parent', type: 'mind_child', isCollapsed: true }];
+    const parent = {
+      id: 'parent',
+      type: 'mind_child',
+      isCollapsed: true,
+      children: [owner],
+      data: { topic: true },
+    };
+    board.children = [board.children[0], parent, board.children[2]];
     expect(isLineBoundToHiddenMindNode(board, board.children[0])).toBe(true);
     expect(isMindAttachmentCollapsed(board, owner)).toBe(true);
   });

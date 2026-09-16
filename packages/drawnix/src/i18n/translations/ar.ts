@@ -132,6 +132,8 @@ const arTranslations: Translations = {
   'popupToolbar.stroke': 'الحد',
   'popupToolbar.opacity': 'مستوى شفافية',
   'popupToolbar.followMindCollapse': 'الطي مع الخريطة الذهنية',
+  'popupToolbar.freeMindLayout': 'تحريك عقد الخريطة بحرية',
+  'popupToolbar.resetMindPosition': 'استعادة الموضع التلقائي',
   'mindAttachment.reassigned': 'تم ربط العنصر بعقدة الخريطة الذهنية الجديدة',
 
   // Text placeholders

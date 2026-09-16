@@ -133,6 +133,8 @@ const viTranslations: Translations = {
   'popupToolbar.stroke': 'Đường viền',
   'popupToolbar.opacity': 'Độ trong suốt',
   'popupToolbar.followMindCollapse': 'Thu gọn theo sơ đồ tư duy',
+  'popupToolbar.freeMindLayout': 'Tự do sắp xếp nút',
+  'popupToolbar.resetMindPosition': 'Khôi phục vị trí tự động',
   'mindAttachment.reassigned': 'Phần tử đã được gán cho nút sơ đồ tư duy mới',
 
   // Text placeholders

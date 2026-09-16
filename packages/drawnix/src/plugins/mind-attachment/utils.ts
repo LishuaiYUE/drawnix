@@ -1,10 +1,4 @@
-import {
-  getElementById,
-  getSelectedElements,
-  PlaitBoard,
-  PlaitElement,
-  Transforms,
-} from '@plait/core';
+import { getSelectedElements, PlaitBoard, PlaitElement, Transforms } from '@plait/core';
 import { MindElement } from '@plait/mind';
 import { PlaitArrowLine, PlaitDrawElement } from '@plait/draw';
 import type { MindAttachment, MindAttachmentLine } from './types';
@@ -14,12 +8,44 @@ export type MindAttachmentContext = MindAttachment & {
   element: PlaitElement;
 };
 
+type ElementTreeEntry = {
+  element: PlaitElement;
+  ancestors: PlaitElement[];
+};
+
+const findElementInCurrentTree = (
+  elements: PlaitElement[],
+  id: string,
+  ancestors: PlaitElement[] = []
+): ElementTreeEntry | null => {
+  for (const element of elements) {
+    if (element.id === id) {
+      return { element, ancestors };
+    }
+    if (element.children?.length) {
+      const result = findElementInCurrentTree(
+        element.children as PlaitElement[],
+        id,
+        ancestors.concat(element)
+      );
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return null;
+};
+
 export const getMindAttachmentContext = (
   board: PlaitBoard,
   line: MindAttachmentLine
 ): MindAttachmentContext | null => {
-  const source = line.source.boundId ? getElementById(board, line.source.boundId) : undefined;
-  const target = line.target.boundId ? getElementById(board, line.target.boundId) : undefined;
+  const source = line.source.boundId
+    ? findElementInCurrentTree(board.children, line.source.boundId)?.element
+    : undefined;
+  const target = line.target.boundId
+    ? findElementInCurrentTree(board.children, line.target.boundId)?.element
+    : undefined;
   if (!source || !target) {
     return null;
   }
@@ -58,13 +84,23 @@ export const getValidMindAttachment = (
 };
 
 export const isMindNodeHiddenByAncestor = (board: PlaitBoard, element: MindElement) => {
-  return MindElement.getAncestors(board, element).some(
+  const entry = findElementInCurrentTree(board.children, element.id);
+  return !!entry?.ancestors.some(
     (ancestor) => MindElement.isMindElement(board, ancestor) && ancestor.isCollapsed
   );
 };
 
 export const isMindAttachmentCollapsed = (board: PlaitBoard, element: MindElement) => {
-  return !!element.isCollapsed || isMindNodeHiddenByAncestor(board, element);
+  const entry = findElementInCurrentTree(board.children, element.id);
+  if (!entry || !MindElement.isMindElement(board, entry.element)) {
+    return false;
+  }
+  return (
+    !!entry.element.isCollapsed ||
+    entry.ancestors.some(
+      (ancestor) => MindElement.isMindElement(board, ancestor) && ancestor.isCollapsed
+    )
+  );
 };
 
 export const getAttachmentLines = (board: PlaitBoard) =>
@@ -143,7 +179,7 @@ export const syncMindAttachment = (board: PlaitBoard, line: MindAttachmentLine) 
 
 export const isLineBoundToHiddenMindNode = (board: PlaitBoard, line: PlaitArrowLine) => {
   return [line.source.boundId, line.target.boundId].some((id) => {
-    const element = id ? getElementById(board, id) : undefined;
+    const element = id ? findElementInCurrentTree(board.children, id)?.element : undefined;
     return (
       !!element &&
       MindElement.isMindElement(board, element) &&
@@ -166,7 +202,11 @@ export const remapPastedAttachmentLines = (
 ) => {
   snapshots.forEach((snapshot) => {
     const lineId = idsMap[snapshot.originalLineId];
-    const line = lineId ? getElementById<MindAttachmentLine>(board, lineId) : undefined;
+    const line = lineId
+      ? (findElementInCurrentTree(board.children, lineId)?.element as
+          | MindAttachmentLine
+          | undefined)
+      : undefined;
     if (!line || !PlaitDrawElement.isArrowLine(line)) {
       return;
     }
