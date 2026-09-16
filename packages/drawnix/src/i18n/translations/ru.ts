@@ -134,6 +134,8 @@ const ruTranslations: Translations = {
   'popupToolbar.stroke': 'Контур',
   'popupToolbar.opacity': 'Прозрачность',
   'popupToolbar.followMindCollapse': 'Сворачивать с интеллект-картой',
+  'popupToolbar.freeMindLayout': 'Свободное размещение узлов',
+  'popupToolbar.resetMindPosition': 'Вернуть автоматическое положение',
   'mindAttachment.reassigned': 'Элемент привязан к новому узлу интеллект-карты',
 
   // Text placeholders

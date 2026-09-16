@@ -494,6 +494,19 @@ export const MindAttachmentIcon = createIcon(
   </svg>
 );
 
+export const MindFreeLayoutIcon = createIcon(
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <path
+      d="M2.5 5V2.5H5m6 0h2.5V5m0 6v2.5H11m-6 0H2.5V11M5.5 8h5M8 5.5v5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const MoreOptionsIcon = createIcon(
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
     <g stroke="none" fill="currentColor">

@@ -20,8 +20,14 @@ export const withCommonPlugin = (board: PlaitBoard) => {
         }, 0);
       },
       update: (updatedProps: Partial<ImageProps>) => {
+        const shouldRender =
+          (updatedProps.isFocus !== undefined && updatedProps.isFocus !== newProps.isFocus) ||
+          (updatedProps.imageItem !== undefined &&
+            updatedProps.imageItem.url !== newProps.imageItem.url);
         newProps = { ...newProps, ...updatedProps };
-        root.render(<Image {...newProps}></Image>);
+        if (shouldRender) {
+          root.render(<Image {...newProps}></Image>);
+        }
       },
     };
     return ref;

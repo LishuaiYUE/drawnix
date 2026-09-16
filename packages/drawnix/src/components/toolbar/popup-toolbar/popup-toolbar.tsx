@@ -43,6 +43,7 @@ import { PopupLinkButton } from './link-button';
 import { ArrowMarkButton } from './arrow-mark-button';
 import { MoreOptionsButton } from './more-options-button';
 import { MindAttachmentButton } from './mind-attachment-button';
+import { MindFreeLayoutButton } from './mind-free-layout-button';
 
 export const PopupToolbar = () => {
   const board = useBoard();
@@ -231,6 +232,7 @@ export const PopupToolbar = () => {
                 <MindAttachmentButton board={board} key="mind-attachment" />
               </>
             )}
+            <MindFreeLayoutButton board={board} />
             <MoreOptionsButton board={board} key={6} />
           </Stack.Row>
         </Island>

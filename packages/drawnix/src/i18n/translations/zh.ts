@@ -133,6 +133,8 @@ const zhTranslations: Translations = {
   'popupToolbar.stroke': '边框',
   'popupToolbar.opacity': '不透明度',
   'popupToolbar.followMindCollapse': '跟随思维导图折叠',
+  'popupToolbar.freeMindLayout': '自由调整节点位置',
+  'popupToolbar.resetMindPosition': '恢复自动位置',
   'mindAttachment.reassigned': '该元素已转移到新的所属节点',
 
   // Text placeholders
