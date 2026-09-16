@@ -1,7 +1,5 @@
 import type { ImageProps, PlaitImageBoard, RenderComponentRef } from '@plait/common';
 import { PlaitBoard, PlaitI18nBoard } from '@plait/core';
-import { createRoot } from 'react-dom/client';
-import { Image } from './components/image';
 import { withImagePlugin } from './with-image';
 import { DrawI18nKey } from '@plait/draw';
 import { MindI18nKey } from '@plait/mind';
@@ -10,26 +8,36 @@ export const withCommonPlugin = (board: PlaitBoard) => {
   const newBoard = board as PlaitBoard & PlaitImageBoard & PlaitI18nBoard;
 
   newBoard.renderImage = (container: Element | DocumentFragment, props: ImageProps) => {
-    const root = createRoot(container);
-    root.render(<Image {...props}></Image>);
+    const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image.setAttribute('preserveAspectRatio', 'none');
+    image.classList.add('image-origin');
+    if (container instanceof Element) {
+      container.replaceWith(image);
+    } else {
+      container.append(image);
+    }
     let newProps = { ...props };
-    const ref: RenderComponentRef<ImageProps> = {
-      destroy: () => {
-        setTimeout(() => {
-          root.unmount();
-        }, 0);
+    const render = () => {
+      image.setAttribute('href', newProps.imageItem.url);
+      image.classList.toggle('image-origin--focus', !!newProps.isFocus);
+    };
+    render();
+    const ref: RenderComponentRef<ImageProps> & {
+      updateRectangle: (rectangle: ReturnType<ImageProps['getRectangle']>) => void;
+    } = {
+      destroy: () => image.remove(),
+      updateRectangle: (rectangle) => {
+        image.setAttribute('x', `${rectangle.x}`);
+        image.setAttribute('y', `${rectangle.y}`);
+        image.setAttribute('width', `${rectangle.width}`);
+        image.setAttribute('height', `${rectangle.height}`);
       },
       update: (updatedProps: Partial<ImageProps>) => {
-        const shouldRender =
-          (updatedProps.isFocus !== undefined && updatedProps.isFocus !== newProps.isFocus) ||
-          (updatedProps.imageItem !== undefined &&
-            updatedProps.imageItem.url !== newProps.imageItem.url);
         newProps = { ...newProps, ...updatedProps };
-        if (shouldRender) {
-          root.render(<Image {...newProps}></Image>);
-        }
+        render();
       },
     };
+    ref.updateRectangle(props.getRectangle());
     return ref;
   };
 
